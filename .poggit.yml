@@ -5,4 +5,7 @@ branches:
 projects:
   EvdBeacon:
     path: ""
+    libs:
+      - src: muqsit/simplepackethandler/SimplePacketHandler
+        version: ^0.0.1
 ...
