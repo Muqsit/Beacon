@@ -55,7 +55,7 @@ final class BeaconInventoryNetworkListener{
 						return false;
 					}
 
-					$tile = $player_pos->getWorldNonNull()->getTile($pos);
+					$tile = $player_pos->getWorld()->getTile($pos);
 					if($tile instanceof Beacon){
 						$inventory = $tile->getInventory();
 						$fuel = $inventory->getFuelItem();

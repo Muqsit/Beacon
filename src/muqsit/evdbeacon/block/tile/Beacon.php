@@ -151,14 +151,14 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	}
 
 	protected function registerBeaconListener() : void{
-		$world = $this->pos->getWorldNonNull();
+		$world = $this->pos->getWorld();
 		foreach($this->getPyramidChunks() as [$chunkX, $chunkZ]){
 			$world->registerChunkListener($this->chunk_listener, $chunkX, $chunkZ);
 		}
 	}
 
 	protected function unregisterBeaconListener() : void{
-		$world = $this->pos->getWorldNonNull();
+		$world = $this->pos->getWorld();
 		foreach($this->getPyramidChunks() as [$chunkX, $chunkZ]){
 			$world->unregisterChunkListener($this->chunk_listener, $chunkX, $chunkZ);
 		}
@@ -234,7 +234,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 		$this->effects = count($effects) > 0 ? $effects : null;
 
 		if($this->hasEffects()){
-			$this->pos->getWorldNonNull()->scheduleDelayedBlockUpdate($this->pos, 1);
+			$this->pos->getWorld()->scheduleDelayedBlockUpdate($this->pos, 1);
 		}
 	}
 
@@ -245,12 +245,12 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 
 	public function flagForLayerRecalculation() : void{
 		$this->recalculateLayers = true;
-		$this->pos->getWorldNonNull()->scheduleDelayedBlockUpdate($this->pos, 1);
+		$this->pos->getWorld()->scheduleDelayedBlockUpdate($this->pos, 1);
 	}
 
 	public function flagForCoverRecalculation() : void{
 		$this->recalculateCover = true;
-		$this->pos->getWorldNonNull()->scheduleDelayedBlockUpdate($this->pos, 1);
+		$this->pos->getWorld()->scheduleDelayedBlockUpdate($this->pos, 1);
 	}
 
 	public function doRecalculationChecks() : void{
@@ -275,7 +275,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 			$x = $this->pos->x;
 			$z = $this->pos->z;
 
-			$world = $this->pos->getWorldNonNull();
+			$world = $this->pos->getWorld();
 			$iterator = new SubChunkIteratorManager($world);
 			$block_factory =  BlockFactory::getInstance();
 
@@ -296,7 +296,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 
 	public function recalculateLayers() : void{
 		$this->layers = 0;
-		$world = $this->pos->getWorldNonNull();
+		$world = $this->pos->getWorld();
 		$iterator = new SubChunkIteratorManager($world);
 
 		for($layer = 1; $layer < 5; ++$layer){
@@ -360,7 +360,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 			$min_chunkZ = $min_z >> 4;
 			$max_chunkZ = $max_z >> 4;
 
-			$world = $this->pos->getWorldNonNull();
+			$world = $this->pos->getWorld();
 			for($chunkX = $min_chunkX; $chunkX <= $max_chunkX; ++$chunkX){
 				for($chunkZ = $min_chunkZ; $chunkZ <= $max_chunkZ; ++$chunkZ){
 					$chunk = $world->getChunk($chunkX, $chunkZ);

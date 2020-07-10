@@ -19,7 +19,7 @@ class BeaconChunkListener implements ChunkListener{
 
 	public function __construct(Beacon $beacon){
 		$pos = $beacon->getPos();
-		$this->world = $pos->getWorldNonNull();
+		$this->world = $pos->getWorld();
 		$this->pos = $pos->asVector3();
 	}
 
