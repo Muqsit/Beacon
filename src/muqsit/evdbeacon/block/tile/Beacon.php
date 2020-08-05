@@ -275,12 +275,15 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 			$x = $this->pos->x;
 			$z = $this->pos->z;
 
+			$chunkX = $x >> 4;
+			$chunkZ = $z >> 4;
+
 			$world = $this->pos->getWorld();
 			$iterator = new SubChunkIteratorManager($world);
 			$block_factory =  BlockFactory::getInstance();
 
 			for($y = $this->pos->y + 1; $y <= World::Y_MAX; ++$y){
-				if(!$iterator->moveTo($x, $y, $z, false)){
+				if(!$world->isChunkLoaded($chunkX, $chunkZ) || !$iterator->moveTo($x, $y, $z, false)){
 					continue;
 				}
 
@@ -319,6 +322,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 			for($x = $min_x; $x <= $max_x; ++$x){
 				for($z = $min_z; $z <= $max_z; ++$z){
 					if(
+						$world->isChunkLoaded($x >> 4, $z >> 4) &&
 						$iterator->moveTo($x, $y, $z, false) &&
 						$beacon_manager->isFullBlockPyramidBlock($iterator->currentChunk->getFullBlock($x & 0x0f, $y, $z & 0x0f))
 					){
