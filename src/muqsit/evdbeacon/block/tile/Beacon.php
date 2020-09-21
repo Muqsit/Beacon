@@ -20,7 +20,7 @@ use pocketmine\inventory\InventoryHolder;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
-use pocketmine\world\utils\SubChunkIteratorManager;
+use pocketmine\world\utils\SubChunkExplorer;
 use pocketmine\world\World;
 
 class Beacon extends Spawnable implements InventoryHolder, Nameable{
@@ -279,7 +279,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 			$chunkZ = $z >> 4;
 
 			$world = $this->pos->getWorld();
-			$iterator = new SubChunkIteratorManager($world);
+			$iterator = new SubChunkExplorer($world);
 			$block_factory =  BlockFactory::getInstance();
 
 			for($y = $this->pos->y + 1; $y <= World::Y_MAX; ++$y){
@@ -300,7 +300,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	public function recalculateLayers() : void{
 		$this->layers = 0;
 		$world = $this->pos->getWorld();
-		$iterator = new SubChunkIteratorManager($world);
+		$iterator = new SubChunkExplorer($world);
 
 		for($layer = 1; $layer < 5; ++$layer){
 			$y = $this->pos->y - $layer;
