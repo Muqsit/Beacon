@@ -16,7 +16,7 @@ use pocketmine\item\ItemIds;
 final class BlockFactory{
 
 	public static function init() : void{
-		VanillaBlockFactory::getInstance()->register(new Beacon(new BlockIdentifier(BlockLegacyIds::BEACON, 0, ItemIds::BEACON, BeaconTile::class), "Beacon", new BlockBreakInfo(0.5, BlockToolType::PICKAXE, 0, 80.0)));
+		VanillaBlockFactory::getInstance()->register(new Beacon(new BlockIdentifier(BlockLegacyIds::BEACON, 0, ItemIds::BEACON, BeaconTile::class), "Beacon", new BlockBreakInfo(0.5, BlockToolType::PICKAXE, 0, 80.0)), true);
 		TileFactory::getInstance()->register(BeaconTile::class, ["evdbeacon:beacon"]);
 	}
 }
