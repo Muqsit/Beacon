@@ -141,8 +141,8 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	}
 
 	protected function addBeaconEffectsData(CompoundTag $nbt) : void{
-		$nbt->setInt(self::TAG_PRIMARY, isset($this->effects[self::EFFECT_PRIMARY]) ? $this->effects[self::EFFECT_PRIMARY]->getId() : 0);
-		$nbt->setInt(self::TAG_SECONDARY, isset($this->effects[self::EFFECT_SECONDARY]) ? $this->effects[self::EFFECT_SECONDARY]->getId() : 0);
+		$nbt->setInt(self::TAG_PRIMARY, isset($this->effects[self::EFFECT_PRIMARY]) ? $this->effects[self::EFFECT_PRIMARY]->getType()->getRuntimeId() : 0);
+		$nbt->setInt(self::TAG_SECONDARY, isset($this->effects[self::EFFECT_SECONDARY]) ? $this->effects[self::EFFECT_SECONDARY]->getType()->getRuntimeId() : 0);
 	}
 
 	protected function onBlockDestroyedHook() : void{
