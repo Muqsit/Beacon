@@ -48,9 +48,10 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	 * @phpstan-return array<int, Effect|null>
 	 */
 	public static function readBeaconEffects(CompoundTag $nbt) : array{
+	   	$map = EffectIdMap::getInstance();
 		return [
-			self::EFFECT_PRIMARY => EffectIdMap::getInstance()->fromId($nbt->getInt(self::TAG_PRIMARY, 0)),
-			self::EFFECT_SECONDARY => EffectIdMap::getInstance()->fromId($nbt->getInt(self::TAG_SECONDARY, 0))
+			self::EFFECT_PRIMARY => $map->fromId($nbt->getInt(self::TAG_PRIMARY, 0)),
+			self::EFFECT_SECONDARY => $map->fromId($nbt->getInt(self::TAG_SECONDARY, 0))
 		];
 	}
 
@@ -141,8 +142,9 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	}
 
 	protected function addBeaconEffectsData(CompoundTag $nbt) : void{
-		$nbt->setInt(self::TAG_PRIMARY, isset($this->effects[self::EFFECT_PRIMARY]) ? $this->effects[self::EFFECT_PRIMARY]->getType()->getRuntimeId() : 0);
-		$nbt->setInt(self::TAG_SECONDARY, isset($this->effects[self::EFFECT_SECONDARY]) ? $this->effects[self::EFFECT_SECONDARY]->getType()->getRuntimeId() : 0);
+        	$map = EffectIdMap::getInstance();
+        	$nbt->setInt(self::TAG_PRIMARY, isset($this->effects[self::EFFECT_PRIMARY]) ? $map->toId($this->effects[self::EFFECT_PRIMARY]->getType()) : 0);
+		$nbt->setInt(self::TAG_SECONDARY, isset($this->effects[self::EFFECT_SECONDARY]) ? $map->toId($this->effects[self::EFFECT_SECONDARY]->getType()) : 0);
 	}
 
 	protected function onBlockDestroyedHook() : void{
