@@ -13,9 +13,9 @@ use pocketmine\block\tile\ContainerTrait;
 use pocketmine\block\tile\Nameable;
 use pocketmine\block\tile\NameableTrait;
 use pocketmine\block\tile\Spawnable;
+use pocketmine\data\bedrock\EffectIdMap;
 use pocketmine\entity\effect\Effect;
 use pocketmine\entity\effect\EffectInstance;
-use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
@@ -49,8 +49,8 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	 */
 	public static function readBeaconEffects(CompoundTag $nbt) : array{
 		return [
-			self::EFFECT_PRIMARY => VanillaEffects::byMcpeId($nbt->getInt(self::TAG_PRIMARY, 0)),
-			self::EFFECT_SECONDARY => VanillaEffects::byMcpeId($nbt->getInt(self::TAG_SECONDARY, 0))
+			self::EFFECT_PRIMARY => EffectIdMap::getInstance()->fromId($nbt->getInt(self::TAG_PRIMARY, 0)),
+			self::EFFECT_SECONDARY => EffectIdMap::getInstance()->fromId($nbt->getInt(self::TAG_SECONDARY, 0))
 		];
 	}
 
@@ -211,8 +211,8 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 				$type = $effect->getType();
 				if($beacon_manager->isEffectValid($type, $this->layers)){
 					$amplifier = $effect->getAmplifier();
-					if(!isset($effects[$type_id = $type->getId()]) || $amplifier > $effects[$type_id]->getAmplifier()){
-						$effects[$type_id] = new EffectInstance($type, $effect->getDuration(), $amplifier, $effect->isVisible(), $effect->isAmbient(), $effect->getColor());
+					if(!isset($effects[$runtime_id = $type->getRuntimeId()]) || $amplifier > $effects[$runtime_id]->getAmplifier()){
+						$effects[$runtime_id] = new EffectInstance($type, $effect->getDuration(), $amplifier, $effect->isVisible(), $effect->isAmbient(), $effect->getColor());
 					}
 				}
 			}
