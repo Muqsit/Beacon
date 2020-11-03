@@ -21,6 +21,7 @@ use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
 use pocketmine\world\utils\SubChunkExplorer;
+use pocketmine\world\utils\SubChunkExplorerStatus;
 use pocketmine\world\World;
 
 class Beacon extends Spawnable implements InventoryHolder, Nameable{
@@ -48,7 +49,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	 * @phpstan-return array<int, Effect|null>
 	 */
 	public static function readBeaconEffects(CompoundTag $nbt) : array{
-	   	$map = EffectIdMap::getInstance();
+		$map = EffectIdMap::getInstance();
 		return [
 			self::EFFECT_PRIMARY => $map->fromId($nbt->getInt(self::TAG_PRIMARY, 0)),
 			self::EFFECT_SECONDARY => $map->fromId($nbt->getInt(self::TAG_SECONDARY, 0))
@@ -142,8 +143,8 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	}
 
 	protected function addBeaconEffectsData(CompoundTag $nbt) : void{
-        	$map = EffectIdMap::getInstance();
-        	$nbt->setInt(self::TAG_PRIMARY, isset($this->effects[self::EFFECT_PRIMARY]) ? $map->toId($this->effects[self::EFFECT_PRIMARY]->getType()) : 0);
+		$map = EffectIdMap::getInstance();
+		$nbt->setInt(self::TAG_PRIMARY, isset($this->effects[self::EFFECT_PRIMARY]) ? $map->toId($this->effects[self::EFFECT_PRIMARY]->getType()) : 0);
 		$nbt->setInt(self::TAG_SECONDARY, isset($this->effects[self::EFFECT_SECONDARY]) ? $map->toId($this->effects[self::EFFECT_SECONDARY]->getType()) : 0);
 	}
 
@@ -285,7 +286,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 			$block_factory =  BlockFactory::getInstance();
 
 			for($y = $this->pos->y + 1; $y <= World::Y_MAX; ++$y){
-				if(!$world->isChunkLoaded($chunkX, $chunkZ) || !$iterator->moveTo($x, $y, $z, false)){
+				if(!$world->isChunkLoaded($chunkX, $chunkZ) || $iterator->moveTo($x, $y, $z) === SubChunkExplorerStatus::INVALID){
 					continue;
 				}
 
@@ -325,7 +326,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 				for($z = $min_z; $z <= $max_z; ++$z){
 					if(
 						$world->isChunkLoaded($x >> 4, $z >> 4) &&
-						$iterator->moveTo($x, $y, $z, false) &&
+						$iterator->moveTo($x, $y, $z) !== SubChunkExplorerStatus::INVALID &&
 						$beacon_manager->isFullBlockPyramidBlock($iterator->currentChunk->getFullBlock($x & 0x0f, $y, $z & 0x0f))
 					){
 						--$needed;
