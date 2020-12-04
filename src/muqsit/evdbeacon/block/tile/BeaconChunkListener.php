@@ -23,16 +23,16 @@ class BeaconChunkListener implements ChunkListener{
 		$this->pos = $pos->asVector3();
 	}
 
-	public function onChunkChanged(Chunk $chunk) : void{
+	public function onChunkChanged(int $chunkX, int $chunkZ, Chunk $chunk) : void{
 	}
 
-	public function onChunkLoaded(Chunk $chunk) : void{
+	public function onChunkLoaded(int $chunkX, int $chunkZ, Chunk $chunk) : void{
 	}
 
-	public function onChunkUnloaded(Chunk $chunk) : void{
+	public function onChunkUnloaded(int $chunkX, int $chunkZ, Chunk $chunk) : void{
 	}
 
-	public function onChunkPopulated(Chunk $chunk) : void{
+	public function onChunkPopulated(int $chunkX, int $chunkZ, Chunk $chunk) : void{
 	}
 
 	public function onBlockChanged(Vector3 $block) : void{
