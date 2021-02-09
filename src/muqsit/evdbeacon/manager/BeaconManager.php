@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace muqsit\evdbeacon\manager;
 
-use Ds\Set;
 use pocketmine\block\Block;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\entity\effect\Effect;
@@ -48,13 +47,13 @@ final class BeaconManager{
 		return self::$instance = $instance;
 	}
 
-	/** @var Set<int> */
-	private $pyramid_blocks;
+	/** @var int[] */
+	private $pyramid_blocks = [];
 
-	/** @var Set<int> */
-	private $fuel_items;
+	/** @var int[] */
+	private $fuel_items = [];
 
-	/** @var array<int, Set<Effect>> */
+	/** @var array<int, array<int, Effect>> */
 	private $effect_validators = [];
 
 	/**
@@ -63,28 +62,23 @@ final class BeaconManager{
 	 * @param BeaconEffectValidator[] $effect_validators
 	 */
 	public function __construct(array $pyramid_blocks, array $fuel_items, array $effect_validators){
-		$this->pyramid_blocks = new Set();
 		foreach($pyramid_blocks as $block){
-			$this->pyramid_blocks->add($block->getFullId());
+			$this->pyramid_blocks[$block_full_id = $block->getFullId()] = $block_full_id;
 		}
 
-		$this->fuel_items = new Set();
 		foreach($fuel_items as $item){
-			$this->fuel_items->add($item->getId());
+			$this->fuel_items[$item_id = $item->getId()] = $item_id;
 		}
 
 		foreach($effect_validators as $validator){
-			if(!isset($this->effect_validators[$validator->required_layers])){
-				$this->effect_validators[$validator->required_layers] = new Set();
-			}
-			$this->effect_validators[$validator->required_layers]->add($validator->effect);
+			$this->effect_validators[$validator->required_layers][$validator->effect->getRuntimeId()] = $validator->effect;
 		}
 
 		ksort($this->effect_validators);
 	}
 
 	public function isFullBlockPyramidBlock(int $full_id) : bool{
-		return $this->pyramid_blocks->contains($full_id);
+		return isset($this->pyramid_blocks[$full_id]);
 	}
 
 	public function isBlockPyramidBlock(Block $block) : bool{
@@ -92,7 +86,7 @@ final class BeaconManager{
 	}
 
 	public function isFuelItem(Item $item) : bool{
-		return $this->fuel_items->contains($item->getId());
+		return isset($this->fuel_items[$item->getId()]);
 	}
 
 	public function isEffectValid(Effect $effect, int $layers) : bool{
@@ -100,7 +94,7 @@ final class BeaconManager{
 			if($layers < $required_layers){
 				break;
 			}
-			if($effects->contains($effect)){
+			if(isset($effects[$effect->getRuntimeId()])){
 				return true;
 			}
 		}
