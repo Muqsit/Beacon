@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace muqsit\evdbeacon\block;
 
 use muqsit\evdbeacon\block\tile\Beacon as BeaconTile;
+use muqsit\evdbeacon\timings\BeaconTimings;
 use pocketmine\block\Block;
 use pocketmine\block\Transparent;
 use pocketmine\item\Item;
@@ -42,7 +43,9 @@ class Beacon extends Transparent{
 	public function onScheduledUpdate() : void{
 		$tile = $this->getBeaconTile();
 		if($tile instanceof BeaconTile){
+			BeaconTimings::$tick->startTiming();
 			$tile->tick();
+			BeaconTimings::$tick->stopTiming();
 		}
 	}
 }
