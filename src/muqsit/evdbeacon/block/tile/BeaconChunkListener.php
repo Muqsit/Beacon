@@ -11,11 +11,8 @@ use pocketmine\world\World;
 
 class BeaconChunkListener implements ChunkListener{
 
-	/** @var World */
-	protected $world;
-
-	/** @var Vector3 */
-	protected $pos;
+	protected World $world;
+	protected Vector3 $pos;
 
 	public function __construct(Beacon $beacon){
 		$pos = $beacon->getPos();

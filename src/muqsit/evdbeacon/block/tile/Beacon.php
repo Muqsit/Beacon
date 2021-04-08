@@ -68,25 +68,14 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	}
 
 	/** @var EffectInstance[]|null */
-	private $effects;
+	private ?array $effects = null;
 
-	/** @var BeaconChunkListener */
-	private $chunk_listener;
-
-	/** @var BeaconInventory */
-	protected $inventory;
-
-	/** @var int */
-	private $layers = 0;
-
-	/** @var bool */
-	private $covered = false;
-
-	/** @var bool */
-	private $recalculateLayers = true;
-
-	/** @var bool */
-	private $recalculateCover = true;
+	protected BeaconInventory $inventory;
+	private BeaconChunkListener $chunk_listener;
+	private int $layers = 0;
+	private bool $covered = false;
+	private bool $recalculateLayers = true;
+	private bool $recalculateCover = true;
 
 	public function __construct(World $world, Vector3 $pos){
 		parent::__construct($world, $pos);

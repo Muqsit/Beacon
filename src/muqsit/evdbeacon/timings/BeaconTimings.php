@@ -9,8 +9,7 @@ use pocketmine\timings\TimingsHandler;
 
 final class BeaconTimings{
 
-	/** @var TimingsHandler */
-	public static $tick;
+	public static TimingsHandler $tick;
 
 	public static function init(Loader $loader) : void{
 		$plugin_info = "Plugin: {$loader->getFullName()}";

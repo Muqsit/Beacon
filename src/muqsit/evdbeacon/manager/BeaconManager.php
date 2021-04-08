@@ -13,8 +13,7 @@ use pocketmine\item\VanillaItems;
 
 final class BeaconManager{
 
-	/** @var self|null */
-	private static $instance = null;
+	private static ?self $instance = null;
 
 	public static function vanilla() : self{
 		return new self([
@@ -48,13 +47,13 @@ final class BeaconManager{
 	}
 
 	/** @var int[] */
-	private $pyramid_blocks = [];
+	private array $pyramid_blocks = [];
 
 	/** @var int[] */
-	private $fuel_items = [];
+	private array $fuel_items = [];
 
 	/** @var array<int, array<int, Effect>> */
-	private $effect_validators = [];
+	private array $effect_validators = [];
 
 	/**
 	 * @param Block[] $pyramid_blocks

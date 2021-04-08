@@ -12,11 +12,8 @@ final class BeaconEffectValidator{
 		return new self($effect, $required_layers);
 	}
 
-	/** @var Effect */
-	public $effect;
-
-	/** @var int */
-	public $required_layers;
+	public Effect $effect;
+	public int $required_layers;
 
 	private function __construct(Effect $effect, int $required_layers){
 		$this->effect = $effect;
