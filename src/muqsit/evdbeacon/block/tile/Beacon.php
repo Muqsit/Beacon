@@ -104,14 +104,16 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 		$effects = self::readBeaconEffects($nbt);
 		$this->setEffects($effects[self::EFFECT_PRIMARY], $effects[self::EFFECT_SECONDARY]);
 
-		if($nbt->getTag(self::TAG_LAYERS) instanceof ByteTag){
-			$this->layers = $nbt->getByte(self::TAG_LAYERS);
+		$tag_layers = $nbt->getTag(self::TAG_LAYERS);
+		if($tag_layers instanceof ByteTag){
+			$this->layers = $tag_layers->getValue();
 		}else{
 			$this->flagForLayerRecalculation();
 		}
 
-		if($nbt->getTag(self::TAG_COVERED) instanceof ByteTag){
-			$this->covered = (bool) $nbt->getByte(self::TAG_COVERED);
+		$tag_covered = $nbt->getTag(self::TAG_COVERED);
+		if($tag_covered instanceof ByteTag){
+			$this->covered = (bool) $tag_covered->getValue();
 		}else{
 			$this->flagForCoverRecalculation();
 		}
