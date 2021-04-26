@@ -18,6 +18,7 @@ use pocketmine\entity\effect\Effect;
 use pocketmine\entity\effect\EffectInstance;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
 use pocketmine\world\utils\SubChunkExplorer;
@@ -103,13 +104,13 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 		$effects = self::readBeaconEffects($nbt);
 		$this->setEffects($effects[self::EFFECT_PRIMARY], $effects[self::EFFECT_SECONDARY]);
 
-		if($nbt->hasTag(self::TAG_LAYERS)){
+		if($nbt->getTag(self::TAG_LAYERS) instanceof ByteTag){
 			$this->layers = $nbt->getByte(self::TAG_LAYERS);
 		}else{
 			$this->flagForLayerRecalculation();
 		}
 
-		if($nbt->hasTag(self::TAG_COVERED)){
+		if($nbt->getTag(self::TAG_COVERED) instanceof ByteTag){
 			$this->covered = (bool) $nbt->getByte(self::TAG_COVERED);
 		}else{
 			$this->flagForCoverRecalculation();
