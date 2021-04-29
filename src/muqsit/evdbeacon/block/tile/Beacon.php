@@ -7,6 +7,9 @@ namespace muqsit\evdbeacon\block\tile;
 use Generator;
 use InvalidArgumentException;
 use muqsit\evdbeacon\block\inventory\BeaconInventory;
+use muqsit\evdbeacon\block\tile\listener\BeaconChunkListener;
+use muqsit\evdbeacon\block\tile\listener\EmptyBeaconChunkListener;
+use muqsit\evdbeacon\block\tile\listener\SimpleBeaconChunkListener;
 use muqsit\evdbeacon\manager\BeaconManager;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\tile\ContainerTrait;
@@ -71,7 +74,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	/** @var EffectInstance[]|null */
 	private ?array $effects = null;
 
-	protected BeaconInventory $inventory;
+	protected ?BeaconInventory $inventory;
 	private BeaconChunkListener $chunk_listener;
 	private int $layers = 0;
 	private bool $covered = false;
@@ -81,7 +84,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	public function __construct(World $world, Vector3 $pos){
 		parent::__construct($world, $pos);
 		$this->inventory = new BeaconInventory($this->pos);
-		$this->chunk_listener = new BeaconChunkListener($this);
+		$this->chunk_listener = new SimpleBeaconChunkListener($this);
 		$this->registerBeaconListener();
 	}
 
@@ -159,6 +162,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 		foreach($this->getPyramidChunks() as [$chunkX, $chunkZ]){
 			$world->unregisterChunkListener($this->chunk_listener, $chunkX, $chunkZ);
 		}
+		$this->chunk_listener = EmptyBeaconChunkListener::instance();
 	}
 
 	/**
@@ -397,6 +401,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	public function close() : void{
 		if(!$this->closed){
 			$this->unregisterBeaconListener();
+			$this->inventory = null;
 		}
 
 		parent::close();

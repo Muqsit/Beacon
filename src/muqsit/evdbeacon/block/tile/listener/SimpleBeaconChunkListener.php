@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace muqsit\evdbeacon\block\tile;
+namespace muqsit\evdbeacon\block\tile\listener;
 
+use muqsit\evdbeacon\block\tile\Beacon;
 use pocketmine\math\Vector3;
-use pocketmine\world\ChunkListener;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 
-class BeaconChunkListener implements ChunkListener{
+final class SimpleBeaconChunkListener implements BeaconChunkListener{
 
 	protected World $world;
 	protected Vector3 $pos;
