@@ -107,6 +107,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 		$tag_layers = $nbt->getTag(self::TAG_LAYERS);
 		if($tag_layers instanceof ByteTag){
 			$this->layers = $tag_layers->getValue();
+			$this->recalculateLayers = false;
 		}else{
 			$this->flagForLayerRecalculation();
 		}
@@ -114,6 +115,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 		$tag_covered = $nbt->getTag(self::TAG_COVERED);
 		if($tag_covered instanceof ByteTag){
 			$this->covered = (bool) $tag_covered->getValue();
+			$this->recalculateCover = false;
 		}else{
 			$this->flagForCoverRecalculation();
 		}
