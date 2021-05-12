@@ -7,12 +7,11 @@ namespace muqsit\evdbeacon\timings;
 use muqsit\evdbeacon\Loader;
 use pocketmine\timings\TimingsHandler;
 
-final class BeaconTimings{
+final class BeaconTimings {
+    public static TimingsHandler $tick;
 
-	public static TimingsHandler $tick;
-
-	public static function init(Loader $loader) : void{
-		$plugin_info = "Plugin: {$loader->getFullName()}";
-		self::$tick = new TimingsHandler("{$plugin_info} Event: Beacon::tick");
-	}
+    public static function init(Loader $loader): void {
+        $plugin_info = "Plugin: {$loader->getFullName()}";
+        self::$tick = new TimingsHandler("{$plugin_info} Event: Beacon::tick");
+    }
 }

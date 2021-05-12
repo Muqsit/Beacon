@@ -6,14 +6,14 @@ namespace muqsit\evdbeacon\block\tile\listener;
 
 use pocketmine\world\ChunkListenerNoOpTrait;
 
-final class EmptyBeaconChunkListener implements BeaconChunkListener{
-	use ChunkListenerNoOpTrait;
+final class EmptyBeaconChunkListener implements BeaconChunkListener {
+    use ChunkListenerNoOpTrait;
 
-	public static function instance() : self{
-		static $instance = null;
-		return $instance ??= new self();
-	}
+    public static function instance(): self {
+        static $instance = null;
+        return $instance ??= new self();
+    }
 
-	private function __construct(){
-	}
+    private function __construct() {
+    }
 }

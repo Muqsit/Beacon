@@ -8,14 +8,13 @@ use muqsit\evdbeacon\block\BlockFactory;
 use muqsit\evdbeacon\timings\BeaconTimings;
 use pocketmine\plugin\PluginBase;
 
-final class Loader extends PluginBase{
+final class Loader extends PluginBase {
+    protected function onLoad(): void {
+        BlockFactory::init();
+    }
 
-	protected function onLoad() : void{
-		BlockFactory::init();
-	}
-
-	protected function onEnable() : void{
-		BeaconTimings::init($this);
-		new BeaconInventoryNetworkListener($this);
-	}
+    protected function onEnable(): void {
+        BeaconTimings::init($this);
+        new BeaconInventoryNetworkListener($this);
+    }
 }

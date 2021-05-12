@@ -14,38 +14,61 @@ use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\BlockTransaction;
 
-class Beacon extends Transparent{
+class Beacon extends Transparent {
+    public function place(
+        BlockTransaction $tx,
+        Item $item,
+        Block $blockReplace,
+        Block $blockClicked,
+        int $face,
+        Vector3 $clickVector,
+        ?Player $player = null
+    ): bool {
+        return $face !== Facing::DOWN &&
+            parent::place(
+                $tx,
+                $item,
+                $blockReplace,
+                $blockClicked,
+                $face,
+                $clickVector,
+                $player
+            );
+    }
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
-		return $face !== Facing::DOWN && parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
-	}
+    public function getLightLevel(): int {
+        return 15;
+    }
 
-	public function getLightLevel() : int{
-		return 15;
-	}
+    public function getBeaconTile(): ?BeaconTile {
+        $tile = $this->pos
+            ->getWorld()
+            ->getTileAt($this->pos->x, $this->pos->y, $this->pos->z);
+        return $tile instanceof BeaconTile ? $tile : null;
+    }
 
-	public function getBeaconTile() : ?BeaconTile{
-		$tile = $this->pos->getWorld()->getTileAt($this->pos->x, $this->pos->y, $this->pos->z);
-		return $tile instanceof BeaconTile ? $tile : null;
-	}
+    public function onInteract(
+        Item $item,
+        int $face,
+        Vector3 $clickVector,
+        ?Player $player = null
+    ): bool {
+        if ($player instanceof Player) {
+            $tile = $this->getBeaconTile();
+            if ($tile instanceof BeaconTile) {
+                return $player->setCurrentWindow($tile->getInventory());
+            }
+        }
 
-	public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
-		if($player instanceof Player){
-			$tile = $this->getBeaconTile();
-			if($tile instanceof BeaconTile){
-				return $player->setCurrentWindow($tile->getInventory());
-			}
-		}
+        return parent::onInteract($item, $face, $clickVector, $player);
+    }
 
-		return parent::onInteract($item, $face, $clickVector, $player);
-	}
-
-	public function onScheduledUpdate() : void{
-		$tile = $this->getBeaconTile();
-		if($tile instanceof BeaconTile){
-			BeaconTimings::$tick->startTiming();
-			$tile->tick();
-			BeaconTimings::$tick->stopTiming();
-		}
-	}
+    public function onScheduledUpdate(): void {
+        $tile = $this->getBeaconTile();
+        if ($tile instanceof BeaconTile) {
+            BeaconTimings::$tick->startTiming();
+            $tile->tick();
+            BeaconTimings::$tick->stopTiming();
+        }
+    }
 }

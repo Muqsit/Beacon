@@ -6,5 +6,5 @@ namespace muqsit\evdbeacon\block\tile\listener;
 
 use pocketmine\world\ChunkListener;
 
-interface BeaconChunkListener extends ChunkListener{
+interface BeaconChunkListener extends ChunkListener {
 }
