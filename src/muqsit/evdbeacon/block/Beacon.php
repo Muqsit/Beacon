@@ -25,7 +25,7 @@ class Beacon extends Transparent{
 	}
 
 	public function getBeaconTile() : ?BeaconTile{
-		$tile = $this->pos->getWorld()->getTileAt($this->pos->x, $this->pos->y, $this->pos->z);
+		$tile = $this->position->getWorld()->getTileAt($this->position->x, $this->position->y, $this->position->z);
 		return $tile instanceof BeaconTile ? $tile : null;
 	}
 

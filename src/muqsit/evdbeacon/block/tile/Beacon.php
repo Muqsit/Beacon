@@ -83,7 +83,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 
 	public function __construct(World $world, Vector3 $pos){
 		parent::__construct($world, $pos);
-		$this->inventory = new BeaconInventory($this->pos);
+		$this->inventory = new BeaconInventory($this->position);
 		$this->chunk_listener = new SimpleBeaconChunkListener($this);
 		$this->registerBeaconListener();
 	}
@@ -151,14 +151,14 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	}
 
 	protected function registerBeaconListener() : void{
-		$world = $this->pos->getWorld();
+		$world = $this->position->getWorld();
 		foreach($this->getPyramidChunks() as [$chunkX, $chunkZ]){
 			$world->registerChunkListener($this->chunk_listener, $chunkX, $chunkZ);
 		}
 	}
 
 	protected function unregisterBeaconListener() : void{
-		$world = $this->pos->getWorld();
+		$world = $this->position->getWorld();
 		foreach($this->getPyramidChunks() as [$chunkX, $chunkZ]){
 			$world->unregisterChunkListener($this->chunk_listener, $chunkX, $chunkZ);
 		}
@@ -169,10 +169,10 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	 * @return Generator<int[]>
 	 */
 	protected function getPyramidChunks() : Generator{
-		$minChunkX = ($this->pos->x - 4) >> 4;
-		$maxChunkX = ($this->pos->x + 4) >> 4;
-		$minChunkZ = ($this->pos->z - 4) >> 4;
-		$maxChunkZ = ($this->pos->z + 4) >> 4;
+		$minChunkX = ($this->position->x - 4) >> 4;
+		$maxChunkX = ($this->position->x + 4) >> 4;
+		$minChunkZ = ($this->position->z - 4) >> 4;
+		$maxChunkZ = ($this->position->z + 4) >> 4;
 		for($chunkX = $minChunkX; $chunkX <= $maxChunkX; ++$chunkX){
 			for($chunkZ = $minChunkZ; $chunkZ <= $maxChunkZ; ++$chunkZ){
 				yield [$chunkX, $chunkZ];
@@ -235,7 +235,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 		$this->effects = count($effects) > 0 ? $effects : null;
 
 		if($this->hasEffects()){
-			$this->pos->getWorld()->scheduleDelayedBlockUpdate($this->pos, 1);
+			$this->position->getWorld()->scheduleDelayedBlockUpdate($this->position, 1);
 		}
 	}
 
@@ -246,12 +246,12 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 
 	public function flagForLayerRecalculation() : void{
 		$this->recalculateLayers = true;
-		$this->pos->getWorld()->scheduleDelayedBlockUpdate($this->pos, 1);
+		$this->position->getWorld()->scheduleDelayedBlockUpdate($this->position, 1);
 	}
 
 	public function flagForCoverRecalculation() : void{
 		$this->recalculateCover = true;
-		$this->pos->getWorld()->scheduleDelayedBlockUpdate($this->pos, 1);
+		$this->position->getWorld()->scheduleDelayedBlockUpdate($this->position, 1);
 	}
 
 	public function doRecalculationChecks() : void{
@@ -267,23 +267,23 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	}
 
 	public function recalculateCover() : void{
-		if($this->pos->y < World::Y_MAX){
-			if($this->pos->y < 1){
+		if($this->position->y < World::Y_MAX){
+			if($this->position->y < 1){
 				$this->covered = true;
 				return;
 			}
 
-			$x = $this->pos->x;
-			$z = $this->pos->z;
+			$x = $this->position->x;
+			$z = $this->position->z;
 
 			$chunkX = $x >> 4;
 			$chunkZ = $z >> 4;
 
-			$world = $this->pos->getWorld();
+			$world = $this->position->getWorld();
 			$iterator = new SubChunkExplorer($world);
 			$block_factory =  BlockFactory::getInstance();
 
-			for($y = $this->pos->y + 1; $y <= World::Y_MAX; ++$y){
+			for($y = $this->position->y + 1; $y <= World::Y_MAX; ++$y){
 				if(!$world->isChunkLoaded($chunkX, $chunkZ) || $iterator->moveTo($x, $y, $z) === SubChunkExplorerStatus::INVALID){
 					continue;
 				}
@@ -300,21 +300,21 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 
 	public function recalculateLayers() : void{
 		$this->layers = 0;
-		$world = $this->pos->getWorld();
+		$world = $this->position->getWorld();
 		$iterator = new SubChunkExplorer($world);
 
 		for($layer = 1; $layer < 5; ++$layer){
-			$y = $this->pos->y - $layer;
+			$y = $this->position->y - $layer;
 
 			if($y < 1){
 				return;
 			}
 
-			$min_x = $this->pos->x - $layer;
-			$max_x = $this->pos->x + $layer;
+			$min_x = $this->position->x - $layer;
+			$max_x = $this->position->x + $layer;
 
-			$min_z = $this->pos->z - $layer;
-			$max_z = $this->pos->z + $layer;
+			$min_z = $this->position->z - $layer;
+			$max_z = $this->position->z + $layer;
 
 			$needed = ($n = $layer * 2 + 1) * $n;
 
@@ -350,14 +350,14 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 		if(count($effects) > 0){
 			$range = $this->getRange();
 
-			$min_x = $this->pos->x - $range;
-			$max_x = $this->pos->x + $range;
+			$min_x = $this->position->x - $range;
+			$max_x = $this->position->x + $range;
 
-			$min_y = $this->pos->y - $range;
+			$min_y = $this->position->y - $range;
 			$max_y = $range + World::Y_MAX;
 
-			$min_z = $this->pos->z - $range;
-			$max_z = $this->pos->z + $range;
+			$min_z = $this->position->z - $range;
+			$max_z = $this->position->z + $range;
 
 			$min_chunkX = $min_x >> 4;
 			$max_chunkX = $max_x >> 4;
@@ -365,7 +365,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 			$min_chunkZ = $min_z >> 4;
 			$max_chunkZ = $max_z >> 4;
 
-			$world = $this->pos->getWorld();
+			$world = $this->position->getWorld();
 			for($chunkX = $min_chunkX; $chunkX <= $max_chunkX; ++$chunkX){
 				for($chunkZ = $min_chunkZ; $chunkZ <= $max_chunkZ; ++$chunkZ){
 					$chunk = $world->getChunk($chunkX, $chunkZ);
@@ -388,7 +388,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 				}
 			}
 
-			$world->scheduleDelayedBlockUpdate($this->pos, 80);
+			$world->scheduleDelayedBlockUpdate($this->position, 80);
 		}
 	}
 

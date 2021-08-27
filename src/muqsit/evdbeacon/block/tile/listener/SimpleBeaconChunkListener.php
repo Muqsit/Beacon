@@ -15,7 +15,7 @@ final class SimpleBeaconChunkListener implements BeaconChunkListener{
 	protected Vector3 $pos;
 
 	public function __construct(Beacon $beacon){
-		$pos = $beacon->getPos();
+		$pos = $beacon->getPosition();
 		$this->world = $pos->getWorld();
 		$this->pos = $pos->asVector3();
 	}
