@@ -70,7 +70,7 @@ final class BeaconManager{
 		}
 
 		foreach($effect_validators as $validator){
-			$this->effect_validators[$validator->required_layers][$validator->effect->getRuntimeId()] = $validator->effect;
+			$this->effect_validators[$validator->required_layers][spl_object_id($validator->effect)] = $validator->effect;
 		}
 
 		ksort($this->effect_validators);
@@ -93,7 +93,7 @@ final class BeaconManager{
 			if($layers < $required_layers){
 				break;
 			}
-			if(isset($effects[$effect->getRuntimeId()])){
+			if(isset($effects[spl_object_id($effect)])){
 				return true;
 			}
 		}

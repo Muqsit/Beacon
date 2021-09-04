@@ -212,8 +212,8 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 				$type = $effect->getType();
 				if($beacon_manager->isEffectValid($type, $this->layers)){
 					$amplifier = $effect->getAmplifier();
-					if(!isset($effects[$runtime_id = $type->getRuntimeId()]) || $amplifier > $effects[$runtime_id]->getAmplifier()){
-						$effects[$runtime_id] = new EffectInstance($type, $effect->getDuration(), $amplifier, $effect->isVisible(), $effect->isAmbient(), $effect->getColor());
+					if(!isset($effects[$effect_id = spl_object_id($type)]) || $amplifier > $effects[$effect_id]->getAmplifier()){
+						$effects[$effect_id] = new EffectInstance($type, $effect->getDuration(), $amplifier, $effect->isVisible(), $effect->isAmbient(), $effect->getColor());
 					}
 				}
 			}
