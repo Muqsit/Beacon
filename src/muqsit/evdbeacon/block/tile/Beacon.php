@@ -368,19 +368,16 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 			$world = $this->position->getWorld();
 			for($chunkX = $min_chunkX; $chunkX <= $max_chunkX; ++$chunkX){
 				for($chunkZ = $min_chunkZ; $chunkZ <= $max_chunkZ; ++$chunkZ){
-					$chunk = $world->getChunk($chunkX, $chunkZ);
-					if($chunk !== null){
-						foreach($chunk->getEntities() as $entity){
-							if($entity instanceof Player){
-								$pos = $entity->getPosition();
-								if(
-									$pos->x >= $min_x && $pos->x <= $max_x &&
-									$pos->z >= $min_z && $pos->z <= $max_z &&
-									$pos->y >= $min_y && $pos->y <= $max_y
-								){
-									foreach($effects as $effect){
-										$entity->getEffects()->add(new EffectInstance($effect->getType(), $effect->getDuration(), $effect->getAmplifier(), $effect->isVisible(), $effect->isAmbient(), $effect->getColor()));
-									}
+					foreach($world->getChunkEntities($chunkX, $chunkZ) as $entity){
+						if($entity instanceof Player){
+							$pos = $entity->getPosition();
+							if(
+								$pos->x >= $min_x && $pos->x <= $max_x &&
+								$pos->z >= $min_z && $pos->z <= $max_z &&
+								$pos->y >= $min_y && $pos->y <= $max_y
+							){
+								foreach($effects as $effect){
+									$entity->getEffects()->add(new EffectInstance($effect->getType(), $effect->getDuration(), $effect->getAmplifier(), $effect->isVisible(), $effect->isAmbient(), $effect->getColor()));
 								}
 							}
 						}
