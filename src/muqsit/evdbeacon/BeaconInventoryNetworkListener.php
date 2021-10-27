@@ -49,7 +49,7 @@ final class BeaconInventoryNetworkListener{
 			->interceptIncoming(static function(BlockActorDataPacket $packet, NetworkSession $origin) : bool{
 				$player = $origin->getPlayer();
 				if($player instanceof Player){
-					$pos = new Vector3($packet->x, $packet->y, $packet->z);
+					$pos = new Vector3($packet->blockPosition->getX(), $packet->blockPosition->getY(), $packet->blockPosition->getZ());
 					$player_pos = $player->getPosition();
 					if($pos->distanceSquared($player_pos) > 10000){
 						return false;
