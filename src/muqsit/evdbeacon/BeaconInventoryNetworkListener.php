@@ -26,7 +26,7 @@ final class BeaconInventoryNetworkListener{
 		SimplePacketHandler::createInterceptor($plugin)
 			->interceptOutgoing(static function(ContainerOpenPacket $packet, NetworkSession $origin) : bool{
 				if($origin->getInvManager()->getWindow($packet->windowId) instanceof BeaconInventory){
-					$packet->type = WindowTypes::BEACON;
+					$packet->windowType = WindowTypes::BEACON;
 				}
 				return true;
 			})
@@ -60,7 +60,7 @@ final class BeaconInventoryNetworkListener{
 						$inventory = $tile->getInventory();
 						$fuel = $inventory->getFuelItem();
 						if(!$fuel->isNull() && BeaconManager::getInstance()->isFuelItem($fuel)){
-							$nbt = $packet->namedtag->getRoot();
+							$nbt = $packet->nbt->getRoot();
 							if($nbt instanceof CompoundTag){
 								/**
 								 * @var Effect|null $primary_selected
