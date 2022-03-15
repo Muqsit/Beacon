@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace muqsit\evdbeacon\block;
+namespace muqsit\beacon\block;
 
-use muqsit\evdbeacon\block\tile\Beacon as BeaconTile;
-use muqsit\evdbeacon\timings\BeaconTimings;
+use muqsit\beacon\block\tile\Beacon as BeaconTile;
+use muqsit\beacon\timings\BeaconTimings;
 use pocketmine\block\Block;
 use pocketmine\block\Transparent;
 use pocketmine\item\Item;

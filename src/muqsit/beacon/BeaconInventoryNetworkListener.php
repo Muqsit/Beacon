@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace muqsit\evdbeacon;
+namespace muqsit\beacon;
 
-use muqsit\evdbeacon\block\inventory\BeaconInventory;
-use muqsit\evdbeacon\block\tile\Beacon;
-use muqsit\evdbeacon\manager\BeaconManager;
+use muqsit\beacon\block\inventory\BeaconInventory;
+use muqsit\beacon\block\tile\Beacon;
+use muqsit\beacon\manager\BeaconManager;
 use muqsit\simplepackethandler\SimplePacketHandler;
 use pocketmine\entity\effect\Effect;
 use pocketmine\math\Vector3;

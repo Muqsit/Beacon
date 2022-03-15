@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace muqsit\evdbeacon\block\inventory;
+namespace muqsit\beacon\block\inventory;
 
 use pocketmine\block\inventory\BlockInventory;
 use pocketmine\inventory\SimpleInventory;

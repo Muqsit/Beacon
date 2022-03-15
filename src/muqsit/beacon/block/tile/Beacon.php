@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace muqsit\evdbeacon\block\tile;
+namespace muqsit\beacon\block\tile;
 
 use Generator;
 use InvalidArgumentException;
-use muqsit\evdbeacon\block\inventory\BeaconInventory;
-use muqsit\evdbeacon\block\tile\listener\BeaconChunkListener;
-use muqsit\evdbeacon\block\tile\listener\EmptyBeaconChunkListener;
-use muqsit\evdbeacon\block\tile\listener\SimpleBeaconChunkListener;
-use muqsit\evdbeacon\manager\BeaconManager;
+use muqsit\beacon\block\inventory\BeaconInventory;
+use muqsit\beacon\block\tile\listener\BeaconChunkListener;
+use muqsit\beacon\block\tile\listener\EmptyBeaconChunkListener;
+use muqsit\beacon\block\tile\listener\SimpleBeaconChunkListener;
+use muqsit\beacon\manager\BeaconManager;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\tile\ContainerTrait;
 use pocketmine\block\tile\Nameable;

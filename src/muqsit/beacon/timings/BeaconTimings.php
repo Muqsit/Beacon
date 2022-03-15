@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace muqsit\evdbeacon\timings;
+namespace muqsit\beacon\timings;
 
-use muqsit\evdbeacon\Loader;
+use muqsit\beacon\Loader;
 use pocketmine\timings\TimingsHandler;
 
 final class BeaconTimings{

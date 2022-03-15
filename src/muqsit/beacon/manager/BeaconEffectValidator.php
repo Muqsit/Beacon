@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace muqsit\evdbeacon\manager;
+namespace muqsit\beacon\manager;
 
 use pocketmine\entity\effect\Effect;
 

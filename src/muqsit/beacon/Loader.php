@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace muqsit\evdbeacon;
+namespace muqsit\beacon;
 
-use muqsit\evdbeacon\block\BlockFactory;
-use muqsit\evdbeacon\timings\BeaconTimings;
+use muqsit\beacon\block\BlockFactory;
+use muqsit\beacon\timings\BeaconTimings;
 use pocketmine\plugin\PluginBase;
 
 final class Loader extends PluginBase{

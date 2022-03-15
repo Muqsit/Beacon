@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace muqsit\evdbeacon\block;
+namespace muqsit\beacon\block;
 
-use muqsit\evdbeacon\block\tile\Beacon as BeaconTile;
+use muqsit\beacon\block\tile\Beacon as BeaconTile;
 use pocketmine\block\BlockFactory as VanillaBlockFactory;
 use pocketmine\block\BlockIdentifier;
 use pocketmine\block\tile\TileFactory;

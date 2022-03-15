@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace muqsit\evdbeacon\block\tile\listener;
+namespace muqsit\beacon\block\tile\listener;
 
-use muqsit\evdbeacon\block\tile\Beacon;
+use muqsit\beacon\block\tile\Beacon;
 use pocketmine\math\Vector3;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\World;

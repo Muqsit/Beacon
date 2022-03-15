@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace muqsit\evdbeacon\block\tile\listener;
+namespace muqsit\beacon\block\tile\listener;
 
 use pocketmine\world\ChunkListener;
 
