@@ -29,12 +29,12 @@ final class BeaconManager{
 			VanillaItems::GOLD_INGOT(),
 			VanillaItems::IRON_INGOT()
 		], [
-			BeaconEffectValidator::create(VanillaEffects::SPEED(), 1),
-			BeaconEffectValidator::create(VanillaEffects::HASTE(), 1),
-			BeaconEffectValidator::create(VanillaEffects::RESISTANCE(), 2),
-			BeaconEffectValidator::create(VanillaEffects::JUMP_BOOST(), 2),
-			BeaconEffectValidator::create(VanillaEffects::STRENGTH(), 3),
-			BeaconEffectValidator::create(VanillaEffects::REGENERATION(), 4)
+			new BeaconEffectValidator(VanillaEffects::SPEED(), 1),
+			new BeaconEffectValidator(VanillaEffects::HASTE(), 1),
+			new BeaconEffectValidator(VanillaEffects::RESISTANCE(), 2),
+			new BeaconEffectValidator(VanillaEffects::JUMP_BOOST(), 2),
+			new BeaconEffectValidator(VanillaEffects::STRENGTH(), 3),
+			new BeaconEffectValidator(VanillaEffects::REGENERATION(), 4)
 		]);
 	}
 
