@@ -50,7 +50,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	 * @param CompoundTag $nbt
 	 * @return Effect[]|null[]
 	 *
-	 * @phpstan-return array<int, Effect|null>
+	 * @phpstan-return array{0: Effect|null, 1: Effect|null}
 	 */
 	public static function readBeaconEffects(CompoundTag $nbt) : array{
 		$map = EffectIdMap::getInstance();
@@ -61,14 +61,11 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	}
 
 	public static function getLayerRequirementForBeaconEffect(int $type) : int{
-		switch($type){
-			case self::EFFECT_PRIMARY:
-				return 1;
-			case self::EFFECT_SECONDARY:
-				return self::MAX_LAYERS;
-		}
-
-		throw new InvalidArgumentException("Invalid beacon effect type {$type}");
+		return match($type){
+			self::EFFECT_PRIMARY => 1,
+			self::EFFECT_SECONDARY => self::MAX_LAYERS,
+			default => throw new InvalidArgumentException("Invalid beacon effect type {$type}")
+		};
 	}
 
 	/** @var EffectInstance[]|null */
@@ -166,13 +163,16 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	}
 
 	/**
+	 * @param int $chunk_radius
 	 * @return Generator<int[]>
+	 *
+	 * @phpstan-return Generator<array{int, int}>
 	 */
-	protected function getPyramidChunks() : Generator{
-		$minChunkX = ($this->position->x - 4) >> 4;
-		$maxChunkX = ($this->position->x + 4) >> 4;
-		$minChunkZ = ($this->position->z - 4) >> 4;
-		$maxChunkZ = ($this->position->z + 4) >> 4;
+	protected function getPyramidChunks(int $chunk_radius = 4) : Generator{
+		$minChunkX = ($this->position->x - $chunk_radius) >> 4;
+		$maxChunkX = ($this->position->x + $chunk_radius) >> 4;
+		$minChunkZ = ($this->position->z - $chunk_radius) >> 4;
+		$maxChunkZ = ($this->position->z + $chunk_radius) >> 4;
 		for($chunkX = $minChunkX; $chunkX <= $maxChunkX; ++$chunkX){
 			for($chunkZ = $minChunkZ; $chunkZ <= $maxChunkZ; ++$chunkZ){
 				yield [$chunkX, $chunkZ];
@@ -204,19 +204,24 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 			return [];
 		}
 
-		/** @var EffectInstance[] $effects */
 		$effects = [];
 		$beacon_manager = BeaconManager::getInstance();
 		foreach($this->effects as $beacon_effect_type => $effect){
-			if($this->layers >= self::getLayerRequirementForBeaconEffect($beacon_effect_type)){
-				$type = $effect->getType();
-				if($beacon_manager->isEffectValid($type, $this->layers)){
-					$amplifier = $effect->getAmplifier();
-					if(!isset($effects[$effect_id = spl_object_id($type)]) || $amplifier > $effects[$effect_id]->getAmplifier()){
-						$effects[$effect_id] = new EffectInstance($type, $effect->getDuration(), $amplifier, $effect->isVisible(), $effect->isAmbient(), $effect->getColor());
-					}
-				}
+			if($this->layers < self::getLayerRequirementForBeaconEffect($beacon_effect_type)){
+				continue;
 			}
+
+			$type = $effect->getType();
+			if(!$beacon_manager->isEffectValid($type, $this->layers)){
+				continue;
+			}
+
+			$amplifier = $effect->getAmplifier();
+			if(isset($effects[$effect_id = spl_object_id($type)]) && $amplifier <= $effects[$effect_id]->getAmplifier()){
+				continue;
+			}
+
+			$effects[$effect_id] = new EffectInstance($type, $effect->getDuration(), $amplifier, $effect->isVisible(), $effect->isAmbient(), $effect->getColor());
 		}
 		return $effects;
 	}
@@ -347,46 +352,52 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 		}
 
 		$effects = $this->getValidEffects();
-		if(count($effects) > 0){
-			$range = $this->getRange();
+		if(count($effects) === 0){
+			return;
+		}
 
-			$min_x = $this->position->x - $range;
-			$max_x = $this->position->x + $range;
+		$range = $this->getRange();
 
-			$min_y = $this->position->y - $range;
-			$max_y = $range + World::Y_MAX;
+		$min_x = $this->position->x - $range;
+		$max_x = $this->position->x + $range;
 
-			$min_z = $this->position->z - $range;
-			$max_z = $this->position->z + $range;
+		$min_y = $this->position->y - $range;
+		$max_y = $range + World::Y_MAX;
 
-			$min_chunkX = $min_x >> 4;
-			$max_chunkX = $max_x >> 4;
+		$min_z = $this->position->z - $range;
+		$max_z = $this->position->z + $range;
 
-			$min_chunkZ = $min_z >> 4;
-			$max_chunkZ = $max_z >> 4;
+		$min_chunkX = $min_x >> 4;
+		$max_chunkX = $max_x >> 4;
 
-			$world = $this->position->getWorld();
-			for($chunkX = $min_chunkX; $chunkX <= $max_chunkX; ++$chunkX){
-				for($chunkZ = $min_chunkZ; $chunkZ <= $max_chunkZ; ++$chunkZ){
-					foreach($world->getChunkEntities($chunkX, $chunkZ) as $entity){
-						if($entity instanceof Player){
-							$pos = $entity->getPosition();
-							if(
-								$pos->x >= $min_x && $pos->x <= $max_x &&
-								$pos->z >= $min_z && $pos->z <= $max_z &&
-								$pos->y >= $min_y && $pos->y <= $max_y
-							){
-								foreach($effects as $effect){
-									$entity->getEffects()->add(new EffectInstance($effect->getType(), $effect->getDuration(), $effect->getAmplifier(), $effect->isVisible(), $effect->isAmbient(), $effect->getColor()));
-								}
-							}
-						}
+		$min_chunkZ = $min_z >> 4;
+		$max_chunkZ = $max_z >> 4;
+
+		$world = $this->position->getWorld();
+		for($chunkX = $min_chunkX; $chunkX <= $max_chunkX; ++$chunkX){
+			for($chunkZ = $min_chunkZ; $chunkZ <= $max_chunkZ; ++$chunkZ){
+				foreach($world->getChunkEntities($chunkX, $chunkZ) as $entity){
+					if(!($entity instanceof Player)){
+						continue;
+					}
+
+					$pos = $entity->getPosition();
+					if(
+						$pos->x < $min_x || $pos->x > $max_x ||
+						$pos->z < $min_z || $pos->z > $max_z ||
+						$pos->y < $min_y || $pos->y > $max_y
+					){
+						continue;
+					}
+
+					foreach($effects as $effect){
+						$entity->getEffects()->add(new EffectInstance($effect->getType(), $effect->getDuration(), $effect->getAmplifier(), $effect->isVisible(), $effect->isAmbient(), $effect->getColor()));
 					}
 				}
 			}
-
-			$world->scheduleDelayedBlockUpdate($this->position, 80);
 		}
+
+		$world->scheduleDelayedBlockUpdate($this->position, 80);
 	}
 
 	protected function addAdditionalSpawnData(CompoundTag $nbt) : void{
