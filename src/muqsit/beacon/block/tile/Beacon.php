@@ -79,7 +79,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	public function __construct(World $world, Vector3 $pos){
 		parent::__construct($world, $pos);
 		$this->inventory = new BeaconInventory($this->position);
-		$this->chunk_listener = new SimpleBeaconChunkListener($this);
+		$this->chunk_listener = new SimpleBeaconChunkListener($this, self::MAX_LAYERS);
 		$this->registerBeaconListener();
 	}
 
@@ -161,14 +161,14 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	}
 
 	/**
-	 * @param int $chunk_radius
+	 * @param int $radius
 	 * @return Generator<array{int, int}>
 	 */
-	protected function getPyramidChunks(int $chunk_radius = 4) : Generator{
-		$minChunkX = ($this->position->x - $chunk_radius) >> 4;
-		$maxChunkX = ($this->position->x + $chunk_radius) >> 4;
-		$minChunkZ = ($this->position->z - $chunk_radius) >> 4;
-		$maxChunkZ = ($this->position->z + $chunk_radius) >> 4;
+	protected function getPyramidChunks(int $radius = self::MAX_LAYERS) : Generator{
+		$minChunkX = ($this->position->x - $radius) >> 4;
+		$maxChunkX = ($this->position->x + $radius) >> 4;
+		$minChunkZ = ($this->position->z - $radius) >> 4;
+		$maxChunkZ = ($this->position->z + $radius) >> 4;
 		for($chunkX = $minChunkX; $chunkX <= $maxChunkX; ++$chunkX){
 			for($chunkZ = $minChunkZ; $chunkZ <= $maxChunkZ; ++$chunkZ){
 				yield [$chunkX, $chunkZ];

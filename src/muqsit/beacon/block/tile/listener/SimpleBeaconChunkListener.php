@@ -11,13 +11,15 @@ use pocketmine\world\World;
 
 final class SimpleBeaconChunkListener implements BeaconChunkListener{
 
-	protected World $world;
-	protected Vector3 $pos;
+	private World $world;
+	private Vector3 $pos;
+	private int $pyramid_radius;
 
-	public function __construct(Beacon $beacon){
+	public function __construct(Beacon $beacon, int $pyramid_radius){
 		$pos = $beacon->getPosition();
 		$this->world = $pos->getWorld();
 		$this->pos = $pos->asVector3();
+		$this->pyramid_radius = $pyramid_radius;
 	}
 
 	public function onChunkChanged(int $chunkX, int $chunkZ, Chunk $chunk) : void{
@@ -33,20 +35,21 @@ final class SimpleBeaconChunkListener implements BeaconChunkListener{
 	}
 
 	public function onBlockChanged(Vector3 $block) : void{
-		if( // TODO: Check for blocks inside 3D pyramidal volume instead of a cubical, possibly by caching XYZ offsets relative to beacon's position
-			$block->y >= ($this->pos->y - 4) &&
-			$block->y < $this->pos->y &&
-
-			$block->x >= ($this->pos->x - 4) &&
-			$block->x <= ($this->pos->x + 4) &&
-
-			$block->z >= ($this->pos->z - 4) &&
-			$block->z <= ($this->pos->z + 4)
+		$depth = $this->pos->y - $block->y;
+		if(
+			$depth <= 0 ||
+			$depth > $this->pyramid_radius ||
+			$block->x < $this->pos->x - $depth ||
+			$block->x > $this->pos->x + $depth ||
+			$block->z < $this->pos->z - $depth ||
+			$block->z > $this->pos->z + $depth
 		){
-			$tile = $this->world->getTileAt($this->pos->x, $this->pos->y, $this->pos->z);
-			if($tile instanceof Beacon){
-				$tile->flagForLayerRecalculation();
-			}
+			return;
+		}
+
+		$tile = $this->world->getTileAt($this->pos->x, $this->pos->y, $this->pos->z);
+		if($tile instanceof Beacon){
+			$tile->flagForLayerRecalculation();
 		}
 	}
 }
