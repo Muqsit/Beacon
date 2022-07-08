@@ -8,7 +8,6 @@ use muqsit\beacon\block\inventory\BeaconInventory;
 use muqsit\beacon\block\tile\Beacon;
 use muqsit\beacon\manager\BeaconManager;
 use muqsit\simplepackethandler\SimplePacketHandler;
-use pocketmine\entity\effect\Effect;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\NetworkSession;
@@ -18,7 +17,6 @@ use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 use pocketmine\network\mcpe\protocol\types\inventory\NetworkInventoryAction;
 use pocketmine\network\mcpe\protocol\types\inventory\NormalTransactionData;
 use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
-use pocketmine\player\Player;
 
 final class BeaconInventoryNetworkListener{
 
