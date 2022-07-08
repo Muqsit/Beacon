@@ -50,7 +50,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 
 	/**
 	 * @param CompoundTag $nbt
-	 * @return array{self::EFFECT_PRIMARY: Effect|null, self::EFFECT_SECONDARY: Effect|null}
+	 * @return array{0: Effect|null, 1: Effect|null}
 	 */
 	public static function readBeaconEffects(CompoundTag $nbt) : array{
 		$map = EffectIdMap::getInstance();
