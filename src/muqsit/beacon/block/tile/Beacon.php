@@ -48,9 +48,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 
 	/**
 	 * @param CompoundTag $nbt
-	 * @return Effect[]|null[]
-	 *
-	 * @phpstan-return array{0: Effect|null, 1: Effect|null}
+	 * @return array{self::EFFECT_PRIMARY: Effect|null, self::EFFECT_SECONDARY: Effect|null}
 	 */
 	public static function readBeaconEffects(CompoundTag $nbt) : array{
 		$map = EffectIdMap::getInstance();
@@ -164,9 +162,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 
 	/**
 	 * @param int $chunk_radius
-	 * @return Generator<int[]>
-	 *
-	 * @phpstan-return Generator<array{int, int}>
+	 * @return Generator<array{int, int}>
 	 */
 	protected function getPyramidChunks(int $chunk_radius = 4) : Generator{
 		$minChunkX = ($this->position->x - $chunk_radius) >> 4;
