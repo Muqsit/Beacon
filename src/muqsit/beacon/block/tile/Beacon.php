@@ -24,6 +24,8 @@ use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\player\Player;
+use pocketmine\world\format\Chunk;
+use pocketmine\world\format\SubChunk;
 use pocketmine\world\utils\SubChunkExplorer;
 use pocketmine\world\utils\SubChunkExplorerStatus;
 use pocketmine\world\World;
@@ -165,10 +167,10 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 	 * @return Generator<array{int, int}>
 	 */
 	protected function getPyramidChunks(int $radius = self::MAX_LAYERS) : Generator{
-		$minChunkX = ($this->position->x - $radius) >> 4;
-		$maxChunkX = ($this->position->x + $radius) >> 4;
-		$minChunkZ = ($this->position->z - $radius) >> 4;
-		$maxChunkZ = ($this->position->z + $radius) >> 4;
+		$minChunkX = ($this->position->x - $radius) >> Chunk::COORD_BIT_SIZE;
+		$maxChunkX = ($this->position->x + $radius) >> Chunk::COORD_BIT_SIZE;
+		$minChunkZ = ($this->position->z - $radius) >> Chunk::COORD_BIT_SIZE;
+		$maxChunkZ = ($this->position->z + $radius) >> Chunk::COORD_BIT_SIZE;
 		for($chunkX = $minChunkX; $chunkX <= $maxChunkX; ++$chunkX){
 			for($chunkZ = $minChunkZ; $chunkZ <= $maxChunkZ; ++$chunkZ){
 				yield [$chunkX, $chunkZ];
@@ -277,8 +279,8 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 			$x = $this->position->x;
 			$z = $this->position->z;
 
-			$chunkX = $x >> 4;
-			$chunkZ = $z >> 4;
+			$chunkX = $x >> Chunk::COORD_BIT_SIZE;
+			$chunkZ = $z >> Chunk::COORD_BIT_SIZE;
 
 			$world = $this->position->getWorld();
 			$iterator = new SubChunkExplorer($world);
@@ -289,7 +291,7 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 					continue;
 				}
 
-				if(!$block_factory->fromFullBlock($iterator->currentChunk->getFullBlock($x & 0x0f, $y, $z & 0x0f))->isTransparent()){
+				if(!$block_factory->fromFullBlock($iterator->currentChunk->getFullBlock($x & SubChunk::COORD_MASK, $y, $z & SubChunk::COORD_MASK))->isTransparent()){
 					$this->covered = true;
 					return;
 				}
@@ -324,9 +326,9 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 			for($x = $min_x; $x <= $max_x; ++$x){
 				for($z = $min_z; $z <= $max_z; ++$z){
 					if(
-						$world->isChunkLoaded($x >> 4, $z >> 4) &&
+						$world->isChunkLoaded($x >> Chunk::COORD_BIT_SIZE, $z >> Chunk::COORD_BIT_SIZE) &&
 						$iterator->moveTo($x, $y, $z) !== SubChunkExplorerStatus::INVALID &&
-						$beacon_manager->isFullBlockPyramidBlock($iterator->currentChunk->getFullBlock($x & 0x0f, $y, $z & 0x0f))
+						$beacon_manager->isFullBlockPyramidBlock($iterator->currentChunk->getFullBlock($x & SubChunk::COORD_MASK, $y, $z & SubChunk::COORD_MASK))
 					){
 						--$needed;
 					}
@@ -363,11 +365,11 @@ class Beacon extends Spawnable implements InventoryHolder, Nameable{
 		$min_z = $this->position->z - $range;
 		$max_z = $this->position->z + $range;
 
-		$min_chunkX = $min_x >> 4;
-		$max_chunkX = $max_x >> 4;
+		$min_chunkX = $min_x >> Chunk::COORD_BIT_SIZE;
+		$max_chunkX = $max_x >> Chunk::COORD_BIT_SIZE;
 
-		$min_chunkZ = $min_z >> 4;
-		$max_chunkZ = $max_z >> 4;
+		$min_chunkZ = $min_z >> Chunk::COORD_BIT_SIZE;
+		$max_chunkZ = $max_z >> Chunk::COORD_BIT_SIZE;
 
 		$world = $this->position->getWorld();
 		for($chunkX = $min_chunkX; $chunkX <= $max_chunkX; ++$chunkX){
