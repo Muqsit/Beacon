@@ -8,12 +8,16 @@ use muqsit\beacon\block\inventory\BeaconInventory;
 use muqsit\beacon\block\tile\Beacon;
 use muqsit\beacon\manager\BeaconManager;
 use muqsit\simplepackethandler\SimplePacketHandler;
+use pocketmine\event\EventPriority;
+use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\inventory\Inventory;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\BlockActorDataPacket;
 use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
+use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\inventory\NetworkInventoryAction;
 use pocketmine\network\mcpe\protocol\types\inventory\NormalTransactionData;
 use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
@@ -21,24 +25,23 @@ use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
 final class BeaconInventoryNetworkListener{
 
 	public function __construct(Loader $plugin){
+		$plugin->getServer()->getPluginManager()->registerEvent(PlayerJoinEvent::class, static function(PlayerJoinEvent $event) : void{
+			$callbacks = $event->getPlayer()->getNetworkSession()->getInvManager()->getContainerOpenCallbacks();
+			$old_callbacks = $callbacks->toArray();
+			$callbacks->clear();
+			// shift new callback to the beginning of the set
+			$callbacks->add(static fn(int $id, Inventory $inventory) : ?array => $inventory instanceof BeaconInventory ? [
+				ContainerOpenPacket::blockInv($id, WindowTypes::BEACON, BlockPosition::fromVector3($inventory->getHolder()))
+			] : null, ...$old_callbacks);
+		}, EventPriority::LOWEST, $plugin);
 		SimplePacketHandler::createInterceptor($plugin)
-			->interceptOutgoing(static function(ContainerOpenPacket $packet, NetworkSession $origin) : bool{
-				if($origin->getInvManager()->getWindow($packet->windowId) instanceof BeaconInventory){
-					$packet->windowType = WindowTypes::BEACON;
-				}
-				return true;
-			})
 			->interceptIncoming(static function(InventoryTransactionPacket $packet, NetworkSession $origin) : bool{
 				if($packet->trData instanceof NormalTransactionData){
 					foreach($packet->trData->getActions() as $action){
-						if($action->inventorySlot === 27){
-							$inv_manager = $origin->getInvManager();
-							$window_id = $inv_manager->getCurrentWindowId();
-							if($inv_manager->getWindow($window_id) instanceof BeaconInventory){
-								$action->sourceType = NetworkInventoryAction::SOURCE_CONTAINER;
-								$action->windowId = $window_id;
-								$action->inventorySlot = BeaconInventory::SLOT_FUEL;
-							}
+						if($action->inventorySlot === 27 && $origin->getPlayer()?->getCurrentWindow() instanceof BeaconInventory){
+							$action->sourceType = NetworkInventoryAction::SOURCE_CONTAINER;
+							$action->windowId = $origin->getInvManager()?->getCurrentWindowId();
+							$action->inventorySlot = BeaconInventory::SLOT_FUEL;
 						}
 					}
 				}
